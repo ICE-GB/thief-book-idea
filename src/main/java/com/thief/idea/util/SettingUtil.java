@@ -1,16 +1,17 @@
 package com.thief.idea.util;
 
-
 import com.thief.idea.PersistentState;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SettingUtil {
 
 
-    public static PersistentState getPersistentState(){
+    public static PersistentState getPersistentState() {
         return PersistentState.getInstance();
     }
 

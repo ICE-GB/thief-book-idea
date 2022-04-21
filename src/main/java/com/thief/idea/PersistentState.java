@@ -1,7 +1,7 @@
 package com.thief.idea;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import org.apache.commons.lang.StringUtils;
@@ -38,22 +38,19 @@ public class PersistentState implements PersistentStateComponent<Element> {
 
     private String lineSpace;
 
-//    private String bossKey;
-
-
 
     public PersistentState() {
     }
 
     public static PersistentState getInstance() {
         if (persistentState == null) {
-            persistentState = ServiceManager.getService(PersistentState.class);
+            persistentState = ApplicationManager.getApplication().getService(PersistentState.class);
         }
         return persistentState;
     }
 
     public static PersistentState getInstanceForce() {
-        return ServiceManager.getService(PersistentState.class);
+        return ApplicationManager.getApplication().getService(PersistentState.class);
     }
 
 
@@ -68,10 +65,8 @@ public class PersistentState implements PersistentStateComponent<Element> {
         element.setAttribute("next", this.getNext());
         element.setAttribute("currentLine", this.getCurrentLine());
         element.setAttribute("fontType", this.getFontType());
-        element.setAttribute("lineCount",this.getLineCount());
-        element.setAttribute("lineSpace",this.getLineSpace());
-//        element.setAttribute("bossKey",this.getBossKey());
-
+        element.setAttribute("lineCount", this.getLineCount());
+        element.setAttribute("lineSpace", this.getLineSpace());
         return element;
     }
 
@@ -86,7 +81,6 @@ public class PersistentState implements PersistentStateComponent<Element> {
         this.setFontType(state.getAttributeValue("fontType"));
         this.setLineCount(state.getAttributeValue("lineCount"));
         this.setLineSpace(state.getAttributeValue("lineSpace"));
-//        this.setLineSpace(state.getAttributeValue("bossKey"));
 
     }
 
@@ -112,7 +106,7 @@ public class PersistentState implements PersistentStateComponent<Element> {
     }
 
     public String getBefore() {
-        return StringUtils.isEmpty(before) ? "Alt + ←" : this.before;
+        return StringUtils.isEmpty(before) ? "Shift + ←" : this.before;
     }
 
     public void setBefore(String before) {
@@ -120,7 +114,7 @@ public class PersistentState implements PersistentStateComponent<Element> {
     }
 
     public String getNext() {
-        return StringUtils.isEmpty(next) ? "Alt + →" : this.next;
+        return StringUtils.isEmpty(next) ? "Shift + →" : this.next;
     }
 
     public void setNext(String next) {
@@ -150,26 +144,20 @@ public class PersistentState implements PersistentStateComponent<Element> {
     public void setFontType(String fontType) {
         this.fontType = fontType;
     }
+
     public String getLineCount() {
-        return this.lineCount =StringUtils.isEmpty(lineCount) ? "1" : lineCount;
+        return this.lineCount = StringUtils.isEmpty(lineCount) ? "1" : lineCount;
     }
+
     public void setLineCount(String lineCount) {
         this.lineCount = lineCount;
     }
 
     public String getLineSpace() {
-        return this.lineSpace=StringUtils.isEmpty(lineSpace) ? "0" : lineSpace;
+        return this.lineSpace = StringUtils.isEmpty(lineSpace) ? "0" : lineSpace;
     }
 
     public void setLineSpace(String lineSpace) {
         this.lineSpace = lineSpace;
     }
-
-//    public String getBossKey() {
-//        return StringUtils.isEmpty(bossKey) ? "Ctrl + Shift + ↓" : this.bossKey;
-//    }
-//
-//    public void setBossKey(String bossKey) {
-//        this.bossKey = bossKey;
-//    }
 }

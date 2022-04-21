@@ -1,6 +1,5 @@
 package com.thief.idea;
 
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -21,20 +20,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MainUi implements ToolWindowFactory, DumbAware {
+public class MainUi implements ToolWindowFactory {
 
     private PersistentState persistentState = PersistentState.getInstance();
 
     /**
      * 缓存文件页数所对应的seek，避免搜索指针的时候每次从头读取文件
      **/
-    private Map<Integer, Long> seekDictionary = new LinkedHashMap<>();
+    private final Map<Integer, Long> seekDictionary = new LinkedHashMap<>();
 
     /**
      * 缓存文件页数所对应seek的间隔
      * 该值越小，跳页时间越短，但对应的内存会增大
      **/
-    private int cacheInterval = 200;
+    private final int cacheInterval = 200;
 
     /**
      * 读取文件路径
@@ -106,7 +105,7 @@ public class MainUi implements ToolWindowFactory, DumbAware {
         try {
             JPanel panel = initPanel();
             ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-            Content content = contentFactory.createContent(panel, "Thief-Book", false);
+            Content content = contentFactory.createContent(panel, "Memory Leak Detection", false);
             toolWindow.getContentManager().addContent(content);
 
         } catch (Exception e) {
@@ -216,10 +215,10 @@ public class MainUi implements ToolWindowFactory, DumbAware {
     }
 
     /**
-     * 刷新按钮🔄
+     * 刷新按钮
      **/
     private JButton initFreshButton() {
-        JButton refresh = new JButton("\uD83D\uDD04");
+        JButton refresh = new JButton("〄");
         refresh.setPreferredSize(new Dimension(20, 20));
         refresh.setContentAreaFilled(false);
         refresh.setBorderPainted(false);
@@ -266,8 +265,8 @@ public class MainUi implements ToolWindowFactory, DumbAware {
      * 向上翻页按钮
      **/
     private JButton initUpButton() {
-        JButton afterB = new JButton("prev");
-        afterB.setPreferredSize(new Dimension(40, 20));
+        JButton afterB = new JButton("△");
+        afterB.setPreferredSize(new Dimension(20, 20));
         afterB.setContentAreaFilled(false);
         afterB.setBorderPainted(false);
         afterB.addActionListener(e -> {
@@ -292,11 +291,9 @@ public class MainUi implements ToolWindowFactory, DumbAware {
                 }
             }
         });
-
-        afterB.registerKeyboardAction(afterB.getActionListeners()[0],
-                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_MASK),
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
-
+        afterB.registerKeyboardAction(afterB.getActionListeners()[0]
+                , KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_DOWN_MASK)
+                , JComponent.WHEN_IN_FOCUSED_WINDOW);
         return afterB;
     }
 
@@ -304,8 +301,8 @@ public class MainUi implements ToolWindowFactory, DumbAware {
      * 向下翻页按钮
      **/
     private JButton initDownButton() {
-        JButton nextB = new JButton("next");
-        nextB.setPreferredSize(new Dimension(40, 20));
+        JButton nextB = new JButton("▽");
+        nextB.setPreferredSize(new Dimension(20, 20));
         nextB.setContentAreaFilled(false);
         nextB.setBorderPainted(false);
         nextB.addActionListener(e -> {
@@ -323,11 +320,9 @@ public class MainUi implements ToolWindowFactory, DumbAware {
             }
 
         });
-
-        nextB.registerKeyboardAction(nextB.getActionListeners()[0],
-                KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK),
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
-
+        nextB.registerKeyboardAction(nextB.getActionListeners()[0]
+                , KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK)
+                , JComponent.WHEN_IN_FOCUSED_WINDOW);
         return nextB;
     }
 
@@ -337,7 +332,7 @@ public class MainUi implements ToolWindowFactory, DumbAware {
     private JButton initBossButton(JButton[] buttons) {
         //老板键
         JButton bossB = new JButton(" ");
-        bossB.setPreferredSize(new Dimension(5, 5));
+        bossB.setPreferredSize(new Dimension(12, 12));
         bossB.setContentAreaFilled(false);
         bossB.setBorderPainted(false);
         bossB.addActionListener(e -> {
@@ -375,12 +370,10 @@ public class MainUi implements ToolWindowFactory, DumbAware {
         try {
             ra = new RandomAccessFile(bookFile, "r");
             ra.seek(seek);
-            for (int j = 0; j < lineSpace + 1; j++) {
-                nStr.append("\n");
-            }
+            nStr.append("\n".repeat(Math.max(0, lineSpace + 1)));
             String temp;
             for (int i = 0; i < lineCount && (temp = ra.readLine()) != null; i++) {
-                str.append(new String(temp.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)).append(nStr);
+                str.append(new String(temp.getBytes(StandardCharsets.ISO_8859_1), "gbk")).append(nStr);
                 currentPage++;
             }
             //实例化当前行数
@@ -403,7 +396,7 @@ public class MainUi implements ToolWindowFactory, DumbAware {
     /**
      * 读取文件总行数
      **/
-    private int countLine() throws IOException {
+    private int countLine() {
         try (RandomAccessFile ra = new RandomAccessFile(bookFile, "r")) {
             int i = 0;
             seekDictionary.put(0, ra.getFilePointer());

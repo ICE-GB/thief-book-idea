@@ -16,8 +16,6 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:4dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <colspec value="left:13dlu:noGrow"/>
     <colspec value="left:46dlu:noGrow"/>
@@ -59,13 +57,13 @@
           <text value="..."/>
         </properties>
       </component>
-      <component id="97129" class="javax.swing.JLabel" binding="Label3">
+      <component id="97129" class="javax.swing.JLabel" binding="label3">
         <constraints>
           <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
-          <text value="字号:"/>
+          <text value="字号"/>
         </properties>
       </component>
       <component id="9c2d1" class="javax.swing.JLabel" binding="label4">
@@ -104,9 +102,7 @@
           </grid>
           <forms defaultalign-horz="false"/>
         </constraints>
-        <properties>
-          <text value=""/>
-        </properties>
+        <properties/>
       </component>
       <component id="2fc7b" class="javax.swing.JTextField" binding="bookPathText">
         <constraints>
@@ -132,7 +128,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="字体:"/>
+          <text value="字体"/>
         </properties>
       </component>
       <component id="696d7" class="javax.swing.JComboBox" binding="fontSize">
@@ -142,8 +138,6 @@
         </constraints>
         <properties>
           <model>
-            <item value="8"/>
-            <item value="9"/>
             <item value="10"/>
             <item value="11"/>
             <item value="12"/>
@@ -179,7 +173,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="每行页数:"/>
+          <text value="每行页数"/>
         </properties>
       </component>
       <component id="101e9" class="javax.swing.JComboBox" binding="lineCount">
@@ -202,7 +196,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="行距:"/>
+          <text value="行距"/>
         </properties>
       </component>
       <component id="8f0ee" class="javax.swing.JComboBox" binding="lineSpace">
@@ -217,26 +211,6 @@
             <item value="3"/>
           </model>
           <toolTipText value=""/>
-        </properties>
-      </component>
-      <component id="1696e" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="16" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <text value="老板键:"/>
-        </properties>
-      </component>
-      <component id="1cbf2" class="javax.swing.JTextField" binding="bossKey">
-        <constraints>
-          <grid row="16" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties>
-          <text value=""/>
         </properties>
       </component>
     </children>

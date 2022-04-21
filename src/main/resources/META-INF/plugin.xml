@@ -1,0 +1,59 @@
+<idea-plugin>
+    <id>com.thief.idea</id>
+    <name>Thief Book</name>
+    <version>1.0.0</version>
+    <vendor email="2327259688@qq.com" url="https://github.com/ICE-GB/thief-book-idea">iceg</vendor>
+
+    <description>
+        <![CDATA[
+    <p><b>This is a plug-in that can be read in the IDE. </b></p>
+    <br/>
+    <p>
+    <b>
+    How to use?
+    <br/>
+    1.Choose your book on the settings page
+    <br/>
+    2.Click the refresh button in the thief panel
+    <br/>
+    <p>
+    <b>
+    <br/>
+    <br/>
+    Settings page : File | Settings | Other Settings | Thief-Book Config
+    <br/>
+    You can choose font, number of lines, etc.
+     ]]>
+    </description>
+
+    <change-notes>
+
+    </change-notes>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="211.0"/>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!--canCloseContents 允许用户关闭-->
+        <toolWindow id="提示" anchor="bottom" canCloseContents="false"
+                    icon="AllIcons.Actions.IntentionBulbGrey" factoryClass="com.thief.idea.MainUi"/>
+
+        <projectConfigurable groupId="Other Settings" displayName="Thief-Book Config" id="thief.id"
+                             instance="com.thief.idea.Setting"/>
+        <applicationService
+                serviceImplementation="com.thief.idea.PersistentState"/>
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!--Add your actions here -->
+        <action id="show-thief-book" class="com.thief.idea.ShowThiefBook" text="Show Thief" description="Show thief">
+            <add-to-group group-id="WindowMenu" anchor="last"/>
+        </action>
+    </actions>
+
+</idea-plugin>
