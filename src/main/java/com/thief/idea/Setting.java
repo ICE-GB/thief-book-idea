@@ -15,7 +15,7 @@ public class Setting implements SearchableConfigurable {
 
     private SettingUi settingUi;
 
-    private PersistentState persistentState = PersistentState.getInstance();
+    private final PersistentState persistentState = PersistentState.getInstance();
 
 
     @SuppressWarnings("FieldCanBeLocal")

@@ -39,6 +39,13 @@ public class SettingUi {
     public JComboBox<Integer> lineSpace;
     public JLabel label7;
 
+    private final Integer MIN_FONT_SIZE = 11;
+    private final Integer MAX_FONT_SIZE = 25;
+    private final Integer MIN_LINE_COUNT = 1;
+    private final Integer MAX_LINE_COUNT = 10;
+    private final Integer MIN_LINE_SIZE = 0;
+    private final Integer MAX_LINE_SIZE = 3;
+
 
     public SettingUi() {
         button2.addActionListener(e -> {
@@ -50,7 +57,7 @@ public class SettingUi {
         });
         final DefaultComboBoxModel<Integer> defaultComboBoxModel1 = new DefaultComboBoxModel<>();
 
-        for (int i = 11; i < 25; i++) {
+        for (int i = MIN_FONT_SIZE; i < MAX_FONT_SIZE; i++) {
             defaultComboBoxModel1.addElement(i);
         }
 
@@ -64,14 +71,14 @@ public class SettingUi {
         fontType.setToolTipText("");
 
         final DefaultComboBoxModel<Integer> defaultComboBoxModel3 = new DefaultComboBoxModel<>();
-        for (int i = 1; i < 11; i++) {
+        for (int i = MIN_LINE_COUNT; i < MAX_LINE_COUNT; i++) {
             defaultComboBoxModel3.addElement(i);
         }
         lineCount.setModel(defaultComboBoxModel3);
         lineCount.setToolTipText("");
 
         final DefaultComboBoxModel<Integer> defaultComboBoxModel4 = new DefaultComboBoxModel<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = MIN_LINE_SIZE; i < MAX_LINE_SIZE; i++) {
             defaultComboBoxModel4.addElement(i);
         }
         lineSpace.setModel(defaultComboBoxModel4);
@@ -84,12 +91,12 @@ public class SettingUi {
             fontSize.setSelectedItem(14);
         }
         bookPathText.setText(persistentState.getBookPathText());
-        fontSize.setSelectedItem(persistentState.getFontSize());
+        fontSize.setSelectedItem(Integer.parseInt(persistentState.getFontSize()));
         fontType.setSelectedItem(persistentState.getFontType());
         before.setText(persistentState.getBefore());
         next.setText(persistentState.getNext());
-        lineCount.setSelectedItem(persistentState.getLineCount());
-        lineSpace.setSelectedItem(persistentState.getLineSpace());
+        lineCount.setSelectedItem(Integer.parseInt(persistentState.getLineCount()));
+        lineSpace.setSelectedItem(Integer.parseInt(persistentState.getLineSpace()));
 
         before.setEditable(false);
         next.setEditable(false);

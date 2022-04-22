@@ -90,7 +90,7 @@ public class PersistentState implements PersistentStateComponent<Element> {
     }
 
     public String getBookPathText() {
-        return bookPathText;
+        return StringUtils.isEmpty(bookPathText)? "README.md" : this.bookPathText;
     }
 
     public void setBookPathText(String bookPathText) {
@@ -138,7 +138,7 @@ public class PersistentState implements PersistentStateComponent<Element> {
     }
 
     public String getFontType() {
-        return StringUtils.isEmpty(fontType) ? "Microsoft JhengHei" : this.fontType;
+        return StringUtils.isEmpty(fontType) ? "微软雅黑" : this.fontType;
     }
 
     public void setFontType(String fontType) {

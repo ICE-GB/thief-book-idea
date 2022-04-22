@@ -373,7 +373,8 @@ public class MainUi implements ToolWindowFactory {
             nStr.append("\n".repeat(Math.max(0, lineSpace + 1)));
             String temp;
             for (int i = 0; i < lineCount && (temp = ra.readLine()) != null; i++) {
-                str.append(new String(temp.getBytes(StandardCharsets.ISO_8859_1), "gbk")).append(nStr);
+                // RandomAccessFile 读取文件的编码是ISO_8859_1，输出时要转换为文件原本的编码
+                str.append(new String(temp.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)).append(nStr);
                 currentPage++;
             }
             //实例化当前行数

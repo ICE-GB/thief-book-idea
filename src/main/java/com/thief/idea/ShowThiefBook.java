@@ -11,7 +11,7 @@ public class ShowThiefBook extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         if (e.getProject() != null) {
             // 将项目对象，ToolWindow的id传入，获取控件对象
-            ToolWindow toolWindow = ToolWindowManager.getInstance(e.getProject()).getToolWindow("maven");
+            ToolWindow toolWindow = ToolWindowManager.getInstance(e.getProject()).getToolWindow("提示");
             if (toolWindow != null) {
                 // 无论当前状态为关闭/打开，进行强制打开ToolWindow
                 toolWindow.show(() -> {
