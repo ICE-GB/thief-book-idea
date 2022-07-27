@@ -104,7 +104,7 @@ public class MainUi implements ToolWindowFactory {
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         try {
             JPanel panel = initPanel();
-            ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+            ContentFactory contentFactory = ContentFactory.getInstance();
             Content content = contentFactory.createContent(panel, "Memory Leak Detection", false);
             toolWindow.getContentManager().addContent(content);
 
