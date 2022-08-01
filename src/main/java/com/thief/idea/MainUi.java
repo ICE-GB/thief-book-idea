@@ -1,6 +1,7 @@
 package com.thief.idea;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
@@ -218,7 +219,7 @@ public class MainUi implements ToolWindowFactory {
      * 刷新按钮
      **/
     private JButton initFreshButton() {
-        JButton refresh = new JButton("〄");
+        JButton refresh = new JButton(IconLoader.getIcon("/actions/refresh_dark.svg", MainUi.class));
         refresh.setPreferredSize(new Dimension(20, 20));
         refresh.setContentAreaFilled(false);
         refresh.setBorderPainted(false);
@@ -265,7 +266,7 @@ public class MainUi implements ToolWindowFactory {
      * 向上翻页按钮
      **/
     private JButton initUpButton() {
-        JButton afterB = new JButton("△");
+        JButton afterB = new JButton(IconLoader.getIcon("/actions/previousOccurence_dark.svg", MainUi.class));
         afterB.setPreferredSize(new Dimension(20, 20));
         afterB.setContentAreaFilled(false);
         afterB.setBorderPainted(false);
@@ -301,7 +302,7 @@ public class MainUi implements ToolWindowFactory {
      * 向下翻页按钮
      **/
     private JButton initDownButton() {
-        JButton nextB = new JButton("▽");
+        JButton nextB = new JButton(IconLoader.getIcon("/actions/nextOccurence_dark.svg", MainUi.class));
         nextB.setPreferredSize(new Dimension(20, 20));
         nextB.setContentAreaFilled(false);
         nextB.setBorderPainted(false);
@@ -332,6 +333,7 @@ public class MainUi implements ToolWindowFactory {
     private JButton initBossButton(JButton[] buttons) {
         //老板键
         JButton bossB = new JButton(" ");
+//        JButton bossB = new JButton(IconLoader.getIcon("/actions/show_dark.svg", MainUi.class));
         bossB.setPreferredSize(new Dimension(12, 12));
         bossB.setContentAreaFilled(false);
         bossB.setBorderPainted(false);
