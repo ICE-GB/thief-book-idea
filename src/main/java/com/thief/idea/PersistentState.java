@@ -38,6 +38,10 @@ public class PersistentState implements PersistentStateComponent<Element> {
 
     private String lineSpace;
 
+    private String chapterIndex;
+
+    private String lineIndex;
+
 
     public PersistentState() {
     }
@@ -67,6 +71,8 @@ public class PersistentState implements PersistentStateComponent<Element> {
         element.setAttribute("fontType", this.getFontType());
         element.setAttribute("lineCount", this.getLineCount());
         element.setAttribute("lineSpace", this.getLineSpace());
+        element.setAttribute("chapterIndex", this.getChapterIndex());
+        element.setAttribute("lineIndex", this.getLineIndex());
         return element;
     }
 
@@ -81,6 +87,8 @@ public class PersistentState implements PersistentStateComponent<Element> {
         this.setFontType(state.getAttributeValue("fontType"));
         this.setLineCount(state.getAttributeValue("lineCount"));
         this.setLineSpace(state.getAttributeValue("lineSpace"));
+        this.setChapterIndex(state.getAttributeValue("chapterIndex"));
+        this.setLineIndex(state.getAttributeValue("lineIndex"));
 
     }
 
@@ -90,7 +98,7 @@ public class PersistentState implements PersistentStateComponent<Element> {
     }
 
     public String getBookPathText() {
-        return StringUtils.isEmpty(bookPathText)? "README.md" : this.bookPathText;
+        return StringUtils.isEmpty(bookPathText) ? "README.md" : this.bookPathText;
     }
 
     public void setBookPathText(String bookPathText) {
@@ -159,5 +167,21 @@ public class PersistentState implements PersistentStateComponent<Element> {
 
     public void setLineSpace(String lineSpace) {
         this.lineSpace = lineSpace;
+    }
+
+    public String getChapterIndex() {
+        return this.chapterIndex = StringUtils.isEmpty(chapterIndex) ? "0" : chapterIndex;
+    }
+
+    public void setChapterIndex(String chapterIndex) {
+        this.chapterIndex = chapterIndex;
+    }
+
+    public String getLineIndex() {
+        return this.lineIndex = StringUtils.isEmpty(lineIndex) ? "0" : lineIndex;
+    }
+
+    public void setLineIndex(String lineIndex) {
+        this.lineIndex = lineIndex;
     }
 }

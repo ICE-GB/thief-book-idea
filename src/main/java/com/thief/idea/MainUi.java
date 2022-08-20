@@ -7,12 +7,6 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.JBUI;
-import com.thief.idea.client.yuedu.BookClient;
-import com.thief.idea.pojo.param.GetBookChapterListParam;
-import com.thief.idea.pojo.param.GetBookContentParam;
-import com.thief.idea.pojo.vo.Book;
-import com.thief.idea.pojo.vo.BookChapter;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -20,11 +14,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MainUi implements ToolWindowFactory {
@@ -106,6 +96,8 @@ public class MainUi implements ToolWindowFactory {
      * 是否隐藏界面
      **/
     private boolean hide = false;
+
+    private YueDuService yueDuService;
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
@@ -197,20 +189,13 @@ public class MainUi implements ToolWindowFactory {
                         String input = current.getText();
                         String inputCurrent = input.split("/")[0].trim();
                         int i = Integer.parseInt(inputCurrent);
-                        if (i <= 1) {
-                            seek = 0;
-                            currentPage = 0;
-                        } else {
-                            currentPage = (i - 1) * lineCount;
-                            if (currentPage > totalLine) {
-                                currentPage = totalLine - 1;
-                            }
-                            countSeek();
+                        i = i - 1;
+                        if (i < 0) {
+                            i = 0;
                         }
-                        textArea.setText(readBook());
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                        textArea.setText(e1.toString());
+                        textArea.setText(yueDuService.getBookContentLine(i));
+                        current.setText(String.valueOf(yueDuService.getCurrentLine()));
+                        total.setText(String.valueOf(yueDuService.getTotalLine()));
                     } catch (NumberFormatException e2) {
                         textArea.setText("请输入数字");
                     }
@@ -230,62 +215,12 @@ public class MainUi implements ToolWindowFactory {
         refresh.setContentAreaFilled(false);
         refresh.setBorderPainted(false);
         refresh.addActionListener(e -> {
-            try {
-                persistentState = PersistentState.getInstanceForce();
-                if (StringUtils.isEmpty(persistentState.getBookPathText()) || !bookFile.equals(persistentState.getBookPathText())) {
-                    bookFile = persistentState.getBookPathText();
-                    currentPage = 0;
-                    seek = 0;
-                    seekDictionary.clear();
-                    if (StringUtils.isEmpty(bookFile)) {
-                        totalLine = 0;
-                        return;
-                    }
-                    totalLine = countLine();
-                    countSeek();
-                } else {
-                    // 初始化当前行数
-                    if (StringUtils.isNotEmpty(persistentState.getCurrentLine())) {
-                        currentPage = Integer.parseInt(persistentState.getCurrentLine());
-                    }
-                    if (seekDictionary.size() <= 5 || totalLine == 0) {
-                        totalLine = countLine();
-                        countSeek();
-                    }
-                }
-                type = persistentState.getFontType();
-                size = persistentState.getFontSize();
-                lineCount = Integer.parseInt(persistentState.getLineCount());
-                lineSpace = Integer.parseInt(persistentState.getLineSpace());
-                textArea.setText("已刷新");
-                current.setText(" " + currentPage / lineCount);
-                total.setText("/" + (totalLine % lineCount == 0 ? totalLine / lineCount : totalLine / lineCount + 1));
-                textArea.setFont(new Font(type, Font.PLAIN, Integer.parseInt(size)));
-                textArea.setText(getBookContent());
-            } catch (Exception newE) {
-                newE.printStackTrace();
-            }
+            yueDuService = new YueDuService(persistentState);
+            textArea.setText(yueDuService.refreshBookContentLine());
+            current.setText(String.valueOf(yueDuService.getCurrentLine()));
+            total.setText(String.valueOf(yueDuService.getTotalLine()));
         });
         return refresh;
-    }
-
-    private String getBookContent() {
-        List<Book> bookList = BookClient.getBookshelf(0);
-        if (bookList.isEmpty()) {
-            return "获取书架失败";
-        }
-        Book book = bookList.get(bookList.size() - 1);
-        GetBookChapterListParam getBookChapterListParam = new GetBookChapterListParam();
-        getBookChapterListParam.setUrl(book.getBookUrl());
-        getBookChapterListParam.setRefresh(0);
-        List<BookChapter> bookChapterList = BookClient.getChapterList(getBookChapterListParam);
-        if (bookChapterList.isEmpty()) {
-            return "获取目录失败";
-        }
-        GetBookContentParam getBookContentParam = new GetBookContentParam();
-        getBookContentParam.setUrl(book.getBookUrl());
-        getBookContentParam.setIndex(book.getDurChapterIndex());
-        return BookClient.getBookContent(getBookContentParam);
     }
 
     /**
@@ -297,26 +232,9 @@ public class MainUi implements ToolWindowFactory {
         afterB.setContentAreaFilled(false);
         afterB.setBorderPainted(false);
         afterB.addActionListener(e -> {
-            if (currentPage > totalLine) {
-                return;
-            }
-            if (currentPage / lineCount > 1) {
-                if (currentPage % lineCount == 0) {
-                    currentPage = currentPage - lineCount * 2;
-                } else {
-                    while (currentPage % lineCount != 0) {
-                        currentPage--;
-                    }
-                    currentPage -= lineCount;
-                }
-                try {
-                    countSeek();
-                    textArea.setText(readBook());
-                    current.setText(" " + currentPage / lineCount);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
+            textArea.setText(yueDuService.getBookContentLastLine());
+            current.setText(String.valueOf(yueDuService.getCurrentLine()));
+            total.setText(String.valueOf(yueDuService.getTotalLine()));
         });
         afterB.registerKeyboardAction(afterB.getActionListeners()[0]
                 , KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_DOWN_MASK)
@@ -333,19 +251,9 @@ public class MainUi implements ToolWindowFactory {
         nextB.setContentAreaFilled(false);
         nextB.setBorderPainted(false);
         nextB.addActionListener(e -> {
-
-            if (currentPage < totalLine) {
-                try {
-                    if (currentPage / lineCount <= 1) {
-                        countSeek();
-                    }
-                    textArea.setText(readBook());
-                    current.setText(" " + (currentPage % lineCount == 0 ? currentPage / lineCount : currentPage / lineCount + 1));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-
+            textArea.setText(yueDuService.getBookContentNextLine());
+            current.setText(String.valueOf(yueDuService.getCurrentLine()));
+            total.setText(String.valueOf(yueDuService.getTotalLine()));
         });
         nextB.registerKeyboardAction(nextB.getActionListeners()[0]
                 , KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK)
@@ -387,94 +295,4 @@ public class MainUi implements ToolWindowFactory {
         bossB.registerKeyboardAction(bossB.getActionListeners()[0], KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
         return bossB;
     }
-
-    /**
-     * 向下读取文件
-     **/
-    private String readBook() throws IOException {
-        RandomAccessFile ra = null;
-        StringBuilder str = new StringBuilder();
-        StringBuilder nStr = new StringBuilder();
-        try {
-            ra = new RandomAccessFile(bookFile, "r");
-            ra.seek(seek);
-            nStr.append("\n".repeat(Math.max(0, lineSpace + 1)));
-            String temp;
-            for (int i = 0; i < lineCount && (temp = ra.readLine()) != null; i++) {
-                // RandomAccessFile 读取文件的编码是ISO_8859_1，输出时要转换为文件原本的编码
-                str.append(new String(temp.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)).append(nStr);
-                currentPage++;
-            }
-            // 实例化当前行数
-            persistentState.setCurrentLine(String.valueOf(currentPage));
-            seek = ra.getFilePointer();
-            if (currentPage % cacheInterval == 0) {
-                seekDictionary.put(currentPage, seek);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return e.getMessage();
-        } finally {
-            if (ra != null) {
-                ra.close();
-            }
-        }
-        return str.toString();
-    }
-
-    /**
-     * 读取文件总行数
-     **/
-    private int countLine() {
-        try (RandomAccessFile ra = new RandomAccessFile(bookFile, "r")) {
-            int i = 0;
-            seekDictionary.put(0, ra.getFilePointer());
-            while (ra.readLine() != null) {
-                i++;
-                if (i % cacheInterval == 0) {
-                    seekDictionary.put(i, ra.getFilePointer());
-                }
-            }
-            return i;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    /**
-     * 找到当前指针应在位置
-     **/
-    private void countSeek() throws IOException {
-
-        RandomAccessFile ra = null;
-
-        try {
-            if (seekDictionary.containsKey(currentPage)) {
-                this.seek = seekDictionary.get(currentPage);
-            } else {
-                ra = new RandomAccessFile(bookFile, "r");
-                int line = 0;
-                for (int i = 0; cacheInterval * i < currentPage; i++) {
-                    line = cacheInterval * i;
-                    ra.seek(seekDictionary.get(line));
-                }
-                while (ra.readLine() != null) {
-                    line++;
-                    if (line == currentPage) {
-                        this.seek = ra.getFilePointer();
-                        break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (ra != null) {
-                ra.close();
-            }
-        }
-    }
-
 }

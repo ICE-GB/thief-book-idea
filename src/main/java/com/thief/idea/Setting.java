@@ -66,6 +66,8 @@ public class Setting implements SearchableConfigurable {
     @Override
     public boolean isModified() {
         return !StringUtils.equals(persistentState.getBookPathText(), settingUi.bookPathText.getText())
+                || !StringUtils.equals(persistentState.getChapterIndex(), settingUi.chapterIndex.getText())
+                || !StringUtils.equals(persistentState.getLineIndex(), settingUi.lineIndex.getText())
                 || !StringUtils.equals(persistentState.getFontSize(), settingUi.fontSize.getSelectedItem().toString())
                 || !StringUtils.equals(persistentState.getBefore(), settingUi.before.getText())
                 || !StringUtils.equals(persistentState.getNext(), settingUi.next.getText())
@@ -78,6 +80,8 @@ public class Setting implements SearchableConfigurable {
     @Override
     public void apply() {
         persistentState.setBookPathText(settingUi.bookPathText.getText());
+        persistentState.setChapterIndex(settingUi.chapterIndex.getText());
+        persistentState.setLineIndex(settingUi.lineIndex.getText());
         persistentState.setFontSize(settingUi.fontSize.getSelectedItem().toString());
         persistentState.setBefore(settingUi.before.getText());
         persistentState.setNext(settingUi.next.getText());
