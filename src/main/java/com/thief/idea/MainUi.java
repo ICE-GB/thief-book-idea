@@ -7,6 +7,11 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.ui.JBUI;
+import com.thief.idea.client.yuedu.BookClient;
+import com.thief.idea.pojo.param.GetBookChapterListParam;
+import com.thief.idea.pojo.param.GetBookContentParam;
+import com.thief.idea.pojo.vo.Book;
+import com.thief.idea.pojo.vo.BookChapter;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +24,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainUi implements ToolWindowFactory {
@@ -131,7 +137,7 @@ public class MainUi implements ToolWindowFactory {
      **/
     private JTextArea initTextArea() {
         JTextArea textArea = new JTextArea();
-        //初始化显示文字
+        // 初始化显示文字
         String welcome = "Memory leak detection has started....";
         textArea.setText(welcome);
         textArea.setOpaque(false);
@@ -158,16 +164,16 @@ public class MainUi implements ToolWindowFactory {
         panelRight.setPreferredSize(new Dimension(280, 30));
         panelRight.add(current, BorderLayout.EAST);
         panelRight.add(total, BorderLayout.EAST);
-        //加载按钮
+        // 加载按钮
         JButton fresh = initFreshButton();
         panelRight.add(fresh, BorderLayout.EAST);
-        //上一页
+        // 上一页
         JButton up = initUpButton();
         panelRight.add(up, BorderLayout.EAST);
-        //下一页
+        // 下一页
         JButton down = initDownButton();
         panelRight.add(down, BorderLayout.EAST);
-        //老板键
+        // 老板键
         JButton boss = initBossButton(new JButton[]{fresh, up, down});
         panelRight.add(boss, BorderLayout.SOUTH);
         return panelRight;
@@ -185,7 +191,7 @@ public class MainUi implements ToolWindowFactory {
         current.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                //判断按下的键是否是回车键
+                // 判断按下的键是否是回车键
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     try {
                         String input = current.getText();
@@ -255,11 +261,31 @@ public class MainUi implements ToolWindowFactory {
                 current.setText(" " + currentPage / lineCount);
                 total.setText("/" + (totalLine % lineCount == 0 ? totalLine / lineCount : totalLine / lineCount + 1));
                 textArea.setFont(new Font(type, Font.PLAIN, Integer.parseInt(size)));
+                textArea.setText(getBookContent());
             } catch (Exception newE) {
                 newE.printStackTrace();
             }
         });
         return refresh;
+    }
+
+    private String getBookContent() {
+        List<Book> bookList = BookClient.getBookshelf(0);
+        if (bookList.isEmpty()) {
+            return "获取书架失败";
+        }
+        Book book = bookList.get(bookList.size() - 1);
+        GetBookChapterListParam getBookChapterListParam = new GetBookChapterListParam();
+        getBookChapterListParam.setUrl(book.getBookUrl());
+        getBookChapterListParam.setRefresh(0);
+        List<BookChapter> bookChapterList = BookClient.getChapterList(getBookChapterListParam);
+        if (bookChapterList.isEmpty()) {
+            return "获取目录失败";
+        }
+        GetBookContentParam getBookContentParam = new GetBookContentParam();
+        getBookContentParam.setUrl(book.getBookUrl());
+        getBookContentParam.setIndex(book.getDurChapterIndex());
+        return BookClient.getBookContent(getBookContentParam);
     }
 
     /**
@@ -331,7 +357,7 @@ public class MainUi implements ToolWindowFactory {
      * 隐藏按钮
      **/
     private JButton initBossButton(JButton[] buttons) {
-        //老板键
+        // 老板键
         JButton bossB = new JButton(" ");
 //        JButton bossB = new JButton(IconLoader.getIcon("/actions/show_dark.svg", MainUi.class));
         bossB.setPreferredSize(new Dimension(12, 12));
@@ -379,7 +405,7 @@ public class MainUi implements ToolWindowFactory {
                 str.append(new String(temp.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)).append(nStr);
                 currentPage++;
             }
-            //实例化当前行数
+            // 实例化当前行数
             persistentState.setCurrentLine(String.valueOf(currentPage));
             seek = ra.getFilePointer();
             if (currentPage % cacheInterval == 0) {
