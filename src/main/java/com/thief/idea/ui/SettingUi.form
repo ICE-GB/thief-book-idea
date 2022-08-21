@@ -166,7 +166,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="每行页数"/>
+          <text value="每页行数"/>
         </properties>
       </component>
       <component id="101e9" class="javax.swing.JComboBox" binding="lineCount">
