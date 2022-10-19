@@ -14,28 +14,10 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class MainUi implements ToolWindowFactory {
 
     private PersistentState persistentState = PersistentState.getInstance();
-
-    /**
-     * 缓存文件页数所对应的seek，避免搜索指针的时候每次从头读取文件
-     **/
-    private final Map<Integer, Long> seekDictionary = new LinkedHashMap<>();
-
-    /**
-     * 缓存文件页数所对应seek的间隔
-     * 该值越小，跳页时间越短，但对应的内存会增大
-     **/
-    private final int cacheInterval = 200;
-
-    /**
-     * 读取文件路径
-     **/
-    private String bookFile = persistentState.getBookPathText();
 
     /**
      * 读取字体设置
@@ -102,6 +84,7 @@ public class MainUi implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         try {
+            initPersistentState();
             JPanel panel = initPanel();
             ContentFactory contentFactory = ContentFactory.getInstance();
             Content content = contentFactory.createContent(panel, "Memory Leak Detection", false);
@@ -110,6 +93,14 @@ public class MainUi implements ToolWindowFactory {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void initPersistentState() {
+        persistentState = PersistentState.getInstance();
+        type = persistentState.getFontType();
+        size = persistentState.getFontSize();
+        lineCount = Integer.parseInt(persistentState.getLineCount());
+        lineSpace = Integer.parseInt(persistentState.getLineSpace());
     }
 
     /**
@@ -215,7 +206,9 @@ public class MainUi implements ToolWindowFactory {
         refresh.setContentAreaFilled(false);
         refresh.setBorderPainted(false);
         refresh.addActionListener(e -> {
+            initPersistentState();
             yueDuService = new YueDuService(persistentState);
+            textArea.setFont(new Font(type, Font.PLAIN, Integer.parseInt(size)));
             textArea.setText(yueDuService.refreshBookContentLine());
             current.setText(String.valueOf(yueDuService.getCurrentLine()));
             total.setText(String.valueOf(yueDuService.getTotalLine()));
