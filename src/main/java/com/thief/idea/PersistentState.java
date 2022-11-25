@@ -20,6 +20,8 @@ public class PersistentState implements PersistentStateComponent<Element> {
 
     private static PersistentState persistentState;
 
+    private String serverUrl;
+
     private String bookPathText;
 
     private String showFlag;
@@ -62,6 +64,7 @@ public class PersistentState implements PersistentStateComponent<Element> {
     @Override
     public Element getState() {
         Element element = new Element("PersistentState");
+        element.setAttribute("serverUrl", this.getServerUrl());
         element.setAttribute("bookPath", this.getBookPathText());
         element.setAttribute("showFlag", this.getShowFlag());
         element.setAttribute("fontSize", this.getFontSize());
@@ -78,6 +81,7 @@ public class PersistentState implements PersistentStateComponent<Element> {
 
     @Override
     public void loadState(@NotNull Element state) {
+        this.setServerUrl(state.getAttributeValue("serverUrl"));
         this.setBookPathText(state.getAttributeValue("bookPath"));
         this.setShowFlag(state.getAttributeValue("showFlag"));
         this.setFontSize(state.getAttributeValue("fontSize"));
@@ -95,6 +99,14 @@ public class PersistentState implements PersistentStateComponent<Element> {
     @Override
     public void noStateLoaded() {
 
+    }
+
+    public String getServerUrl() {
+        return StringUtils.isEmpty(serverUrl) ? "http://book.fbi.com:4396" : this.serverUrl;
+    }
+
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     public String getBookPathText() {

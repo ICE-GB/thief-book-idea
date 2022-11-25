@@ -27,6 +27,8 @@ public class SettingUi {
     public JTextField chapterIndex;
     public JLabel lineIndexLabel;
     public JTextField lineIndex;
+    public JLabel serverUrlLabel;
+    public JTextField serverUrl;
 
     private final Integer MIN_FONT_SIZE = 11;
     private final Integer MAX_FONT_SIZE = 25;
@@ -72,6 +74,7 @@ public class SettingUi {
         if (fontSize.getSelectedItem() == null) {
             fontSize.setSelectedItem(14);
         }
+        serverUrl.setText(persistentState.getServerUrl());
         bookPathText.setText(persistentState.getBookPathText());
         chapterIndex.setText(persistentState.getChapterIndex());
         lineIndex.setText(persistentState.getLineIndex());
@@ -85,6 +88,7 @@ public class SettingUi {
 
         before.setEditable(false);
         next.setEditable(false);
+        serverUrl.setEditable(true);
         bookPathText.setEditable(true);
         chapterIndex.setEditable(true);
         lineIndex.setEditable(true);

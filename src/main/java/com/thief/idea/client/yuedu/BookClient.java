@@ -16,12 +16,16 @@ import java.util.Map;
 public class BookClient {
     private static String baseUrl = "http://book.fbi.com:4396";
 
-    private static String getBookshelfUrl = baseUrl + "/reader3/getBookshelf";
-    private static String getChapterListUrl = baseUrl + "/reader3/getChapterList";
-    private static String getBookContentUrl = baseUrl + "/reader3/getBookContent";
+    private static String getBookshelfUrl = "/reader3/getBookshelf";
+    private static String getChapterListUrl = "/reader3/getChapterList";
+    private static String getBookContentUrl = "/reader3/getBookContent";
+
+    public static void setBaseUrl(String newBaseUrl) {
+        baseUrl = newBaseUrl;
+    }
 
     public static List<Book> getBookshelf(Integer refresh) {
-        String resultStr = HttpUtil.get(getBookshelfUrl, Map.of("refresh", refresh));
+        String resultStr = HttpUtil.get(baseUrl + getBookshelfUrl, Map.of("refresh", refresh));
         ReturnData<List<Book>> returnData = JSONUtil.toBean(resultStr, new TypeReference<>() {
         }, true);
         if (returnData.isSuccess()) {
@@ -32,7 +36,7 @@ public class BookClient {
 
     public static List<BookChapter> getChapterList(GetBookChapterListParam getBookChapterListParam) {
 
-        String resultStr = HttpUtil.post(getChapterListUrl, JSONUtil.toJsonStr(getBookChapterListParam));
+        String resultStr = HttpUtil.post(baseUrl + getChapterListUrl, JSONUtil.toJsonStr(getBookChapterListParam));
         ReturnData<List<BookChapter>> returnData = JSONUtil.toBean(resultStr, new TypeReference<>() {
         }, true);
         if (returnData.isSuccess()) {
@@ -44,7 +48,7 @@ public class BookClient {
 
     public static String getBookContent(GetBookContentParam getBookContentParam) {
 
-        String resultStr = HttpUtil.post(getBookContentUrl, JSONUtil.toJsonStr(getBookContentParam));
+        String resultStr = HttpUtil.post(baseUrl + getBookContentUrl, JSONUtil.toJsonStr(getBookContentParam));
         ReturnData<String> returnData = JSONUtil.toBean(resultStr, new TypeReference<>() {
         }, true);
         if (returnData.isSuccess()) {

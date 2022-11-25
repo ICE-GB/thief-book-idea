@@ -45,7 +45,7 @@ public class YueDuService {
         this.persistentState = persistentState;
         this.lineCount = Integer.parseInt(persistentState.getLineCount());
         this.lineSpace = Integer.parseInt(persistentState.getLineSpace());
-
+        BookClient.setBaseUrl(persistentState.getServerUrl());
         init(persistentState.getBookPathText(), persistentState.getChapterIndex(), persistentState.getLineIndex());
     }
 
@@ -203,7 +203,8 @@ public class YueDuService {
     }
 
     public static void main(String[] args) {
-        String bookUrl = "https://www.biqugexx.com/120_120641/";
+        BookClient.setBaseUrl("http://iceg.hopto.org:4396");
+        String bookUrl = "http://www.bqge.org/book/28733/";
         String chapterIndex = "0";
         String lineIndex = "0";
         String lineCount = "2";
