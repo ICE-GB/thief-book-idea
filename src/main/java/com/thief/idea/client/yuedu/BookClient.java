@@ -1,6 +1,8 @@
 package com.thief.idea.client.yuedu;
 
 import cn.hutool.core.lang.TypeReference;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.thief.idea.pojo.param.GetBookChapterListParam;
@@ -20,12 +22,18 @@ public class BookClient {
     private static String getChapterListUrl = "/reader3/getChapterList";
     private static String getBookContentUrl = "/reader3/getBookContent";
 
+    private static String accessToken = "";
+
     public static void setBaseUrl(String newBaseUrl) {
         baseUrl = newBaseUrl;
     }
 
+    public static void setAccessToken(String newAccessToken) {
+        accessToken = newAccessToken;
+    }
+
     public static List<Book> getBookshelf(Integer refresh) {
-        String resultStr = HttpUtil.get(baseUrl + getBookshelfUrl, Map.of("refresh", refresh));
+        String resultStr = execute(HttpRequest.get(baseUrl + getBookshelfUrl).form(Map.of("refresh", refresh)));
         ReturnData<List<Book>> returnData = JSONUtil.toBean(resultStr, new TypeReference<>() {
         }, true);
         if (returnData.isSuccess()) {
@@ -35,8 +43,7 @@ public class BookClient {
     }
 
     public static List<BookChapter> getChapterList(GetBookChapterListParam getBookChapterListParam) {
-
-        String resultStr = HttpUtil.post(baseUrl + getChapterListUrl, JSONUtil.toJsonStr(getBookChapterListParam));
+        String resultStr = execute(HttpRequest.post(baseUrl + getChapterListUrl).body(JSONUtil.toJsonStr(getBookChapterListParam)));
         ReturnData<List<BookChapter>> returnData = JSONUtil.toBean(resultStr, new TypeReference<>() {
         }, true);
         if (returnData.isSuccess()) {
@@ -47,13 +54,29 @@ public class BookClient {
 
 
     public static String getBookContent(GetBookContentParam getBookContentParam) {
-
-        String resultStr = HttpUtil.post(baseUrl + getBookContentUrl, JSONUtil.toJsonStr(getBookContentParam));
+        String resultStr = execute(HttpRequest.post(baseUrl + getBookContentUrl).body(JSONUtil.toJsonStr(getBookContentParam)));
         ReturnData<String> returnData = JSONUtil.toBean(resultStr, new TypeReference<>() {
         }, true);
         if (returnData.isSuccess()) {
             return returnData.getData();
         }
         return "获取正文失败";
+    }
+
+    private static String execute(HttpRequest request) {
+        request.timeout(5000);
+        addAccessToken(request);
+        String resultStr;
+        try (HttpResponse response = request.execute()) {
+            resultStr = response.body();
+        }
+        return resultStr;
+    }
+
+    private static void addAccessToken(HttpRequest request) {
+        if (!(accessToken == null || accessToken.trim().length() == 0)) {
+            Map<String, Object> paramMap = Map.of("accessToken", accessToken, "v", System.currentTimeMillis());
+            request.setUrl(request.getUrl() + "?" + HttpUtil.toParams(paramMap));
+        }
     }
 }

@@ -46,6 +46,7 @@ public class YueDuService {
         this.lineCount = Integer.parseInt(persistentState.getLineCount());
         this.lineSpace = Integer.parseInt(persistentState.getLineSpace());
         BookClient.setBaseUrl(persistentState.getServerUrl());
+        BookClient.setAccessToken(persistentState.getAccessToken());
         init(persistentState.getBookPathText(), persistentState.getChapterIndex(), persistentState.getLineIndex());
     }
 
@@ -203,7 +204,8 @@ public class YueDuService {
     }
 
     public static void main(String[] args) {
-        BookClient.setBaseUrl("http://iceg.hopto.org:4396");
+        BookClient.setBaseUrl("http://book.fbi.com:4398");
+        BookClient.setAccessToken("iceg2022:4de067127edbb9385973c7a54a700a8a");
         String bookUrl = "http://www.bqge.org/book/28733/";
         String chapterIndex = "0";
         String lineIndex = "0";
