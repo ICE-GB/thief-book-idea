@@ -8,6 +8,8 @@ import com.thief.idea.pojo.param.GetBookContentParam;
 import com.thief.idea.pojo.vo.Book;
 import com.thief.idea.pojo.vo.BookChapter;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.*;
 
 public class YueDuService {
@@ -47,6 +49,7 @@ public class YueDuService {
         this.lineSpace = Integer.parseInt(persistentState.getLineSpace());
         BookClient.setBaseUrl(persistentState.getServerUrl());
         BookClient.setAccessToken(persistentState.getAccessToken());
+        BookClient.setProxy(persistentState.getProxy());
         init(persistentState.getBookPathText(), persistentState.getChapterIndex(), persistentState.getLineIndex());
     }
 
@@ -204,9 +207,10 @@ public class YueDuService {
     }
 
     public static void main(String[] args) {
-        BookClient.setBaseUrl("http://book.fbi.com:4398");
-        BookClient.setAccessToken("iceg2022:4de067127edbb9385973c7a54a700a8a");
-        String bookUrl = "http://www.bqge.org/book/28733/";
+        BookClient.setBaseUrl("http://iceg.iceg:4396");
+        BookClient.setAccessToken("iceg2022:338bdbceb8c2a6d7edb474f574530dce");
+        BookClient.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("proxy", 8888)));
+        String bookUrl = "https://infosxs.pysmei.com/BookFiles/Html/628/627910/index.html";
         String chapterIndex = "0";
         String lineIndex = "0";
         String lineCount = "2";

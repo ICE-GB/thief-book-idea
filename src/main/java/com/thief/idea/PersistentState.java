@@ -4,10 +4,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 
 @State(
@@ -24,6 +28,11 @@ public class PersistentState implements PersistentStateComponent<Element> {
 
     private String accessToken;
 
+    private String proxyType;
+
+    private String proxyHostname;
+
+    private Integer proxyPort;
     private String bookPathText;
 
     private String showFlag;
@@ -119,6 +128,40 @@ public class PersistentState implements PersistentStateComponent<Element> {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getProxyType() {
+        return StringUtils.isEmpty(proxyType) ? Proxy.Type.DIRECT.toString() : this.proxyType;
+    }
+
+    public void setProxyType(String proxyType) {
+        this.proxyType = proxyType;
+    }
+
+    public String getProxyHostname() {
+        return StringUtils.isEmpty(proxyHostname) ? "proxy" : proxyHostname;
+    }
+
+    public void setProxyHostname(String proxyHostname) {
+        this.proxyHostname = proxyHostname;
+    }
+
+    public Integer getProxyPort() {
+        return ObjectUtils.isEmpty(proxyPort) ? 8888 : this.proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public Proxy getProxy() {
+        if (StringUtils.isEmpty(proxyType) || StringUtils.isEmpty(proxyHostname) || ObjectUtils.isEmpty(proxyPort)) {
+            return null;
+        }
+        if (Proxy.Type.DIRECT.equals(Proxy.Type.valueOf(proxyType))) {
+            return null;
+        }
+        return new Proxy(Proxy.Type.valueOf(proxyType), new InetSocketAddress(proxyHostname, proxyPort));
     }
 
     public String getBookPathText() {

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class Setting implements SearchableConfigurable {
 
@@ -67,15 +68,18 @@ public class Setting implements SearchableConfigurable {
     public boolean isModified() {
         return !StringUtils.equals(persistentState.getServerUrl(), settingUi.serverUrl.getText())
                 || !StringUtils.equals(persistentState.getAccessToken(), settingUi.accessToken.getText())
+                || !StringUtils.equals(persistentState.getProxyType(), Objects.requireNonNull(settingUi.proxyType.getSelectedItem()).toString())
+                || !StringUtils.equals(persistentState.getProxyHostname(), settingUi.proxyHostname.getText())
+                || !StringUtils.equals(String.valueOf(persistentState.getProxyPort()), settingUi.proxyPort.getText())
                 || !StringUtils.equals(persistentState.getBookPathText(), settingUi.bookPathText.getText())
                 || !StringUtils.equals(persistentState.getChapterIndex(), settingUi.chapterIndex.getText())
                 || !StringUtils.equals(persistentState.getLineIndex(), settingUi.lineIndex.getText())
-                || !StringUtils.equals(persistentState.getFontSize(), settingUi.fontSize.getSelectedItem().toString())
+                || !StringUtils.equals(persistentState.getFontSize(), Objects.requireNonNull(settingUi.fontSize.getSelectedItem()).toString())
                 || !StringUtils.equals(persistentState.getBefore(), settingUi.before.getText())
                 || !StringUtils.equals(persistentState.getNext(), settingUi.next.getText())
-                || !StringUtils.equals(persistentState.getLineCount(), settingUi.lineCount.getSelectedItem().toString())
-                || !StringUtils.equals(persistentState.getLineSpace(), settingUi.lineSpace.getSelectedItem().toString())
-                || !StringUtils.equals(persistentState.getFontType(), settingUi.fontType.getSelectedItem().toString());
+                || !StringUtils.equals(persistentState.getLineCount(), Objects.requireNonNull(settingUi.lineCount.getSelectedItem()).toString())
+                || !StringUtils.equals(persistentState.getLineSpace(), Objects.requireNonNull(settingUi.lineSpace.getSelectedItem()).toString())
+                || !StringUtils.equals(persistentState.getFontType(), Objects.requireNonNull(settingUi.fontType.getSelectedItem()).toString());
 
     }
 
@@ -83,15 +87,18 @@ public class Setting implements SearchableConfigurable {
     public void apply() {
         persistentState.setServerUrl(settingUi.serverUrl.getText());
         persistentState.setAccessToken(settingUi.accessToken.getText());
+        persistentState.setProxyType(Objects.requireNonNull(settingUi.proxyType.getSelectedItem()).toString());
+        persistentState.setProxyHostname(settingUi.proxyHostname.getText());
+        persistentState.setProxyPort(Integer.valueOf(settingUi.proxyPort.getText()));
         persistentState.setBookPathText(settingUi.bookPathText.getText());
         persistentState.setChapterIndex(settingUi.chapterIndex.getText());
         persistentState.setLineIndex(settingUi.lineIndex.getText());
-        persistentState.setFontSize(settingUi.fontSize.getSelectedItem().toString());
+        persistentState.setFontSize(Objects.requireNonNull(settingUi.fontSize.getSelectedItem()).toString());
         persistentState.setBefore(settingUi.before.getText());
         persistentState.setNext(settingUi.next.getText());
-        persistentState.setLineCount(settingUi.lineCount.getSelectedItem().toString());
-        persistentState.setFontType(settingUi.fontType.getSelectedItem().toString());
-        persistentState.setLineSpace(settingUi.lineSpace.getSelectedItem().toString());
+        persistentState.setLineCount(Objects.requireNonNull(settingUi.lineCount.getSelectedItem()).toString());
+        persistentState.setFontType(Objects.requireNonNull(settingUi.fontType.getSelectedItem()).toString());
+        persistentState.setLineSpace(Objects.requireNonNull(settingUi.lineSpace.getSelectedItem()).toString());
 
     }
 

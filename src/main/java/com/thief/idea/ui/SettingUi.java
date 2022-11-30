@@ -4,6 +4,7 @@ import com.thief.idea.PersistentState;
 import com.thief.idea.util.SettingUtil;
 
 import javax.swing.*;
+import java.net.Proxy;
 
 public class SettingUi {
     public JPanel mainPanel;
@@ -31,6 +32,10 @@ public class SettingUi {
     public JTextField serverUrl;
     public JLabel accessTokenLabel;
     public JTextField accessToken;
+    public JLabel proxyLabel;
+    public JComboBox<String> proxyType;
+    public JTextField proxyHostname;
+    public JTextField proxyPort;
 
     private final Integer MIN_FONT_SIZE = 11;
     private final Integer MAX_FONT_SIZE = 25;
@@ -69,6 +74,13 @@ public class SettingUi {
         }
         lineSpace.setModel(defaultComboBoxModel4);
         lineSpace.setToolTipText("");
+
+        final DefaultComboBoxModel<String> defaultComboBoxModel5 = new DefaultComboBoxModel<>();
+        defaultComboBoxModel5.addElement(Proxy.Type.DIRECT.toString());
+        defaultComboBoxModel5.addElement(Proxy.Type.HTTP.toString());
+        defaultComboBoxModel5.addElement(Proxy.Type.SOCKS.toString());
+        proxyType.setModel(defaultComboBoxModel5);
+        proxyType.setToolTipText("");
     }
 
 
@@ -78,6 +90,9 @@ public class SettingUi {
         }
         serverUrl.setText(persistentState.getServerUrl());
         accessToken.setText(persistentState.getAccessToken());
+        proxyType.setSelectedItem(persistentState.getProxyType());
+        proxyHostname.setText(persistentState.getProxyHostname());
+        proxyPort.setText(persistentState.getProxyPort().toString());
         bookPathText.setText(persistentState.getBookPathText());
         chapterIndex.setText(persistentState.getChapterIndex());
         lineIndex.setText(persistentState.getLineIndex());
@@ -93,6 +108,8 @@ public class SettingUi {
         next.setEditable(false);
         serverUrl.setEditable(true);
         accessToken.setEditable(true);
+        proxyHostname.setEditable(true);
+        proxyPort.setEditable(true);
         bookPathText.setEditable(true);
         chapterIndex.setEditable(true);
         lineIndex.setEditable(true);
