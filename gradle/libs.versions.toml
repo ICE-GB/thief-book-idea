@@ -1,0 +1,18 @@
+[versions]
+# libraries
+lombok = "1.18.34"
+hutool = "5.8.32"
+
+# plugins
+kotlin = "1.9.24"
+kover = "0.8.0"
+gradleIntelliJPlugin = "1.17.3"
+
+[libraries]
+lombok = {group = "org.projectlombok", name = "lombok", version.ref = "lombok"}
+hutool = {group = "cn.hutool", name = "hutool-all", version.ref = "hutool"}
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleIntelliJPlugin" }
