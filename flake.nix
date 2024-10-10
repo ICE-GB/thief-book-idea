@@ -14,34 +14,37 @@
           pkgs = import nixpkgs {inherit system;};
         });
   in {
-    devShells = forEachSupportedSystem ({pkgs}: {
+    devShells = forEachSupportedSystem ({pkgs}: let
+      libraries = pkgs.lib.makeLibraryPath (with pkgs;
+        with xorg; [
+          libXtst
+          libXext
+          libX11
+          libXrender
+          libXi
+          freetype
+          fontconfig.lib
+          zlib
+          libsecret
+        ]);
+      gradle-wrapped = pkgs.writeShellScriptBin "gradle" ''
+        export GRADLE_USER_HOME="$HOME/.local/share/gradle"
+        export LD_LIBRARY_PATH=${libraries}
+        exec ${pkgs.gradle.override {
+          javaToolchains = [
+            # "${pkgs.jdk8}/lib/openjdk"
+            # "${pkgs.jdk11}/lib/openjdk"
+            # "${pkgs.jdk17}/lib/openjdk"
+            "${pkgs.jdk21}/lib/openjdk"
+          ];
+        }}/bin/gradle "$@"
+      '';
+    in {
       default = pkgs.mkShell {
-        packages = let
-          libraries = pkgs.lib.makeLibraryPath (with pkgs;
-            with xorg; [
-              libXtst
-              libXext
-              libX11
-              libXrender
-              libXi
-              freetype
-              fontconfig.lib
-              zlib
-              libsecret
-            ]);
-          gradle-wrapped = pkgs.writeShellScriptBin "gradle" ''
-            export GRADLE_USER_HOME="$HOME/.local/share/gradle"
-            export LD_LIBRARY_PATH=${libraries}
-            exec ${pkgs.gradle.override {
-              javaToolchains = [
-                # "${pkgs.jdk8}/lib/openjdk"
-                # "${pkgs.jdk11}/lib/openjdk"
-                "${pkgs.jdk17}/lib/openjdk"
-                # "${pkgs.jdk21}/lib/openjdk"
-              ];
-            }}/bin/gradle "$@"
-          '';
-        in [gradle-wrapped pkgs.kubectl];
+        packages = [gradle-wrapped pkgs.kubectl];
+        shellHook = ''
+          ${gradle-wrapped}/bin/gradle --version
+        '';
       };
     });
   };

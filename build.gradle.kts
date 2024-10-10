@@ -67,7 +67,7 @@ dependencies {
 
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(properties("jdkVersion").map(String::toInt).get())
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
@@ -106,7 +106,7 @@ tasks {
     }
 
     buildSearchableOptions {
-        enabled = properties("intellij.buildSearchableOptions.enabled").map(String::toBoolean).getOrElse(true)
+        enabled = properties("intellij.buildSearchableOptions.enabled").map(String::toBoolean).getOrElse(false)
     }
 
     patchPluginXml {
