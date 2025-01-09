@@ -2,6 +2,7 @@ package com.thief.idea;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.thief.idea.client.yuedu.BookClient;
 import com.thief.idea.pojo.param.GetBookChapterListParam;
 import com.thief.idea.pojo.param.GetBookContentParam;
@@ -77,7 +78,7 @@ public class YueDuService {
         getBookChapterListParam.setRefresh(0);
         this.bookChapterList = BookClient.getChapterList(getBookChapterListParam);
         if (bookChapterList.isEmpty()) {
-            System.out.println("获取目录为空");
+            throw new RuntimeException("该书籍目录获取为空，参数为" + JSONUtil.toJsonPrettyStr(getBookChapterListParam));
         } else {
             this.book.setTotalChapterNum(bookChapterList.size());
             loadBookChapter(this.chapterIndex);
@@ -183,13 +184,18 @@ public class YueDuService {
                 .replaceAll("\\u00a0+", "")
                 .replaceAll("\\u2003+", "")
                 .replaceAll("\\u2002+", "");
-        List<String> tmpList = new ArrayList<>(
+        List<String> tmpListFirst = new ArrayList<>(
                 Arrays.stream(bookContent.split("\\n"))
                         .map(String::trim)
                         .map(x -> (x.replaceAll("^[　*| *| *|//*]*", "").replaceAll("[　*| *| *|//*]*$", "")))
                         .filter(x -> !x.isBlank())
                         .toList()
         );
+        List<String> tmpList = new ArrayList<>();
+        // 对tmpListFirst每一个元素进行检查，如果长度大于100，按最接近100的句号进行分割，放入tmpList
+        for (String s : tmpListFirst) {
+            tmpList.addAll(get100StrList(s));
+        }
         bookContentLineList = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 1; i < tmpList.size() + 1; i++) {
@@ -203,7 +209,24 @@ public class YueDuService {
             }
         }
 
-        bookContentLineList.set(0, "【" + bookChapterList.get(chapterIndex).getTitle() + "】" + bookContentLineList.get(0));
+        bookContentLineList.set(0, "【" + bookChapterList.get(chapterIndex).getTitle() + "】" + bookContentLineList.getFirst());
+    }
+
+    private List<String> get100StrList(String s) {
+        List<String> tmpList = new ArrayList<>();
+        if (s.length() > 100) {
+            int index = s.lastIndexOf("。", 100);
+            if (index > 0) {
+                tmpList.add(s.substring(0, index + 1));
+                tmpList.addAll(get100StrList(s.substring(index + 1)));
+            } else {
+                tmpList.add(s.substring(0, 100));
+                tmpList.addAll(get100StrList(s.substring(100)));
+            }
+        } else {
+            tmpList.add(s);
+        }
+        return tmpList;
     }
 
     public static void main(String[] args) {

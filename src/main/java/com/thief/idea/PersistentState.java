@@ -115,7 +115,7 @@ public class PersistentState implements PersistentStateComponent<Element> {
     }
 
     public String getServerUrl() {
-        return StringUtils.isEmpty(serverUrl) ? "http://book.fbi.com:4396" : this.serverUrl;
+        return StringUtils.isEmpty(serverUrl) ? "https://reader.awnlzw.com" : this.serverUrl;
     }
 
     public void setServerUrl(String serverUrl) {
